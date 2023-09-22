@@ -1,0 +1,105 @@
+@font-face {
+    font-family: 'NYTMagSans';
+    src: url('../fonts/magsans-normal-500.ttf');
+    font-weight: 500;
+  }
+  
+  @font-face {
+    font-family: 'NYTMagSans';
+    src: url('../fonts/magsans-normal-700.ttf');
+    font-weight: 700;
+  }
+  
+  @font-face {
+    font-family: 'NYTFranklinLight';
+    src: url('../fonts/NYTFranklinLight.otf');
+  }
+  
+  @font-face {
+    font-family: 'NYTFranklin';
+    src: url('../fonts/NYTFranklinMedium.otf');
+    font-weight: 500;
+  }
+  
+  @font-face {
+    font-family: 'NYTFranklin';
+    src: url('../fonts/franklin-normal-600.woff2') format('woff2'),
+      url('../fonts/franklin-normal-600.woff') format('woff');
+    font-weight: 600;
+  }
+  
+  @font-face {
+    font-family: 'NYTFranklin';
+    src: url('../fonts/NYTFranklinBold.otf');
+    font-weight: 700;
+  }
+  
+  @font-face {
+    font-family: 'NYTFranklin';
+    src: url('../fonts/NYTFranklinExtraBold.otf');
+    font-weight: 900;
+  }
+  
+  @font-face {
+    font-family: 'NYTStymie';
+    src: url('../fonts/NYTStymieTextExtraBold.otf');
+    font-weight: 900;
+  }
+  
+  @font-face {
+    font-family: 'karnak-bold-condensed';
+    src: url('../fonts/NYTKarnakCondensed-Bold.otf');
+    font-weight: 500;
+  }
+  
+  @font-face {
+    font-family: 'karnakCondensedBold';
+    src: url('../fonts/NYTKarnakCondensed-Bold.otf');
+  }
+  
+  @font-face {
+    font-family: 'karnakMedium';
+    src: url('../fonts/NYTKarnak-Medium.otf');
+  }
+  
+  @font-face {
+    font-family: 'nytFranklinMedium';
+    src: url('../fonts/NYTFranklinMedium.otf');
+    font-weight: 500;
+  }
+  
+  /* !!DEPRECATED!!
+  The fonts below are kept for backwards compatibility but don't use them in future projects */
+  
+  @font-face {
+    font-family: magsans;
+    src: url('../fonts/magsans-normal-500.ttf');
+    font-weight: 500;
+  }
+  
+  @font-face {
+    font-family: magsans-bold;
+    src: url('../fonts/magsans-normal-700.ttf');
+    font-weight: 700;
+  }
+  
+  @font-face {
+    font-family: franklin-extra-bold;
+    src: url('../fonts/NYTFranklinExtraBold.otf');
+    font-weight: 900;
+  }
+  
+  @font-face {
+    font-family: magslab;
+    src: url('../fonts/magslab-normal-700.ttf');
+    font-weight: 700;
+  }
+  
+  @font-face {
+    font-family: karnak;
+    src: url('../fonts/NYTKarnakDisplay.otf');
+    font-weight: 700;
+  }
+  
+  /* end deprecated section */
+  

@@ -1,0 +1,49 @@
+:root {
+	--header-height: 50px;
+}
+
+header {
+	height: var(--header-height);
+	min-height: var(--header-height);
+	background-color: white;
+	border-bottom: 1px solid #e6e6e6;
+	color: white;
+	width: 100vw;
+	max-width: 100%;
+	padding: 0 2vw;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+header h1 {
+	font-size: 1.5em;
+	height: 30px;
+	color: black;
+	font-family: karnak-bold-condensed;
+	letter-spacing: -0.5px;
+	margin: 0;
+}
+
+header .tools {
+	display: flex;
+	align-items: center;
+	user-select: none;
+}
+
+header .tools * {
+	color: var(--link-text-blue);
+	cursor: pointer;
+	font: 1em NYTFranklin;
+	margin-left: 10px;
+}
+header button {
+	background: white;
+	border: none;
+	outline: none;
+	padding: 0;
+}
+header button:disabled {
+	color: gray;
+	cursor: default;
+}

@@ -1,0 +1,205 @@
+main.obscured {
+    filter: blur(5px);
+  }
+  
+  .page.obscured {
+    filter: blur(5px);
+  }
+  
+  .modal {
+    display: none;
+    position: absolute;
+    height: 100vh;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: 10;
+    /* background-color: rgba(255, 255, 255, 0.8); */
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+  }
+  
+  .modal .modal-content {
+    -webkit-box-shadow: 0 3px 12px -1px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 12px -1px rgba(0, 0, 0, 0.3);
+    padding: 1.5em 1em;
+    position: relative;
+    border-radius: 10px;
+    background-color: white;
+    max-width: 500px;
+    text-align: center;
+    width: 86%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+  }
+  
+  .close-x {
+    color: black;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 24px;
+    height: 24px;
+    background: url('../../shared/icons/close-x.svg') center/24px 24px
+      no-repeat;
+  }
+  
+  .modal h1 {
+    font-family: karnak-bold-condensed;
+    font-size: 2em;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+  
+  .modal .oblong-button {
+    background-color: var(--goldenrod);
+    display: block;
+    font-size: 1.5em;
+    height: 40px;
+    margin-bottom: 10px;
+    padding: 0.4em 1em;
+    text-align: center;
+    width: 100%;
+  }
+  
+  .modal p {
+    color: black;
+    margin: 10px 0;
+    font-size: 1em;
+    line-height: 1.5;
+    text-align: center;
+  }
+  
+  .modal p span {
+    font-size: 1em;
+  }
+  
+  .modal .score {
+    font-size: 2em;
+    line-height: 1;
+  }
+  
+  .modal hr {
+    height: 3px;
+    width: 40px;
+    background-color: #333;
+    border: none;
+    margin: 10px 0;
+  }
+  
+  .modal a {
+    color: #333;
+    border-bottom: 3px solid var(--goldenrod);
+  }
+  
+  .modal-content ul {
+    padding: 0 1em;
+    text-align: left;
+  }
+  
+  .modal-content h2 {
+    font-family: 'karnakCondensedBold';
+  }
+  
+  .pressable {
+    margin-top: 0;
+    -webkit-box-shadow: 0 4px 0 0 #ccc;
+    box-shadow: 0 4px 0 0 #ccc;
+  }
+  
+  .pressable:active,
+  .gold.pressable:active {
+    -webkit-box-shadow: 0 0 0 0;
+    box-shadow: 0 0 0 0;
+    position: relative;
+    top: 4px;
+  }
+  
+  .modal button {
+    background: none repeat scroll 0 0 transparent;
+    border: medium none;
+    border-spacing: 0;
+    color: #26589f;
+    font-size: 16px;
+    font-weight: normal;
+    line-height: 1.42rem;
+    list-style: none outside none;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    text-decoration: none;
+    text-indent: 0;
+  }
+  
+  .modal button:focus {
+    outline: 0;
+  }
+  
+  .modal button[disabled='disabled'],
+  .modal button:disabled {
+    background-color: #f2f2f2 !important;
+    color: #999 !important;
+    -webkit-box-shadow: 0 0 0 0 !important;
+    box-shadow: 0 0 0 0 !important;
+    top: 4px !important;
+  }
+  
+  .oblong-button {
+    background-color: white;
+    border-radius: 30px;
+    color: black;
+    font-family: magslab;
+    font-size: 2em;
+    height: 50px;
+    letter-spacing: 0.5px;
+    padding: 0.4em 1.7em;
+    text-decoration: none;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
+  
+  .gold.pressable {
+    background-color: var(--goldenrod);
+    -webkit-box-shadow: 0 4px 0 0 #e0b70a;
+    box-shadow: 0 4px 0 0 #e0b70a;
+  }
+  
+  #alert-modal {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+  
+  .bold {
+    font-family: magsans-bold;
+  }
+  
+  .close-x:hover {
+    cursor: pointer;
+  }
+  

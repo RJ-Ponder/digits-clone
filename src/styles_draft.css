@@ -1,0 +1,88 @@
+:root {
+	--bg-start: #2c35a2;
+	--bg-end: #0f133b;
+
+	--highlight-fg: #161c49;
+	--highlight-primary: #73fff5;
+	--highlight-secondary: #cf0389;
+
+	--fg-color: rgba(255, 255, 255, 0.9);
+
+	--transition: 250ms ease-out;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html {
+  color: var(--fg-color);
+
+  font-family: "Nunito", sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+
+  padding: 2rem;
+  min-height: 100vh;
+
+
+  background: linear-gradient(
+    45deg,
+    var(--bg-start), 
+    var(--bg-end)
+  );
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+
+  text-transform: uppercase;
+  font-size: 2rem;
+}
+
+.logo > img {
+  height: 2rem;
+  margin-right: 1rem;
+}
+
+header {
+  display: flex;
+
+  justify-content: space-between;
+}
+
+a {
+  color: var(--fg-color);
+
+  text-decoration: none;
+}
+
+nav > ul {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: max-content;
+  gap: 0.5rem;
+
+  list-style-type: none;
+}
+
+nav > ul a {
+  padding: 0.25rem 1.25rem;
+
+  text-transform: uppercase;
+
+  transition: color var(--transition),
+    background-color var(--transition);
+}
+
+
