@@ -1,8 +1,8 @@
 const NUMBER_SET_SIZE = 6;
 const NUMBER_SET_MIN = 1;
-const NUMBER_SET_MAX = 24;
-const TARGET_MIN = -100;
-const TARGET_MAX = 500;
+const NUMBER_SET_MAX = 10;
+const TARGET_MIN = -50;
+const TARGET_MAX = 50;
 
 export function generateNumberSet() {
     let numberSet = [];

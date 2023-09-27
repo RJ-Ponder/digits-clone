@@ -10,7 +10,6 @@ import Solution from "./Solution";
 import { useState, useMemo, useEffect } from "react";
 import { generateNumberSet, generateTargetAndSolution } from "../utils/helpers";
 
-// Function to save the startingNumberSet to localStorage
 function saveStartingNumberSetToLocalStorage(startingNumberSet) {
     const gameState = {
         startingNumberSet: startingNumberSet,
@@ -18,7 +17,6 @@ function saveStartingNumberSetToLocalStorage(startingNumberSet) {
     localStorage.setItem('startingNumberSet', JSON.stringify(gameState));
 }
   
-// Function to load the startingNumberSet from localStorage
 function loadStartingNumberSetFromLocalStorage() {
     const savedGameState = localStorage.getItem('startingNumberSet');
     if (savedGameState) {
@@ -28,7 +26,6 @@ function loadStartingNumberSetFromLocalStorage() {
     return null;
 }
 
-// Function to save the startingNumberSet to localStorage
 function saveTargetAndSolutionToLocalStorage(targetAndSolution) {
     const gameState = {
         targetAndSolution: targetAndSolution,
@@ -36,7 +33,6 @@ function saveTargetAndSolutionToLocalStorage(targetAndSolution) {
     localStorage.setItem('targetAndSolution', JSON.stringify(gameState));
 }
   
-// Function to load the startingNumberSet from localStorage
 function loadTargetAndSolutionFromLocalStorage() {
     const savedGameState = localStorage.getItem('targetAndSolution');
     if (savedGameState) {
@@ -46,12 +42,7 @@ function loadTargetAndSolutionFromLocalStorage() {
     return null;
 }
 
-// add a way to collect stars when you reach them
-// store them in local storage
-// show how many are stored
-// don't clear them with new game
 function Game() {
-    // Use useState to manage the startingNumberSet
     const [startingNumberSet, setStartingNumberSet] = useState(() => {
         const loadedStartingNumberSet = loadStartingNumberSetFromLocalStorage();
         return loadedStartingNumberSet || generateNumberSet();
@@ -62,19 +53,16 @@ function Game() {
         saveStartingNumberSetToLocalStorage(startingNumberSet);
     }, [startingNumberSet]);
 
-    // Use useState to manage the Target
     const [targetAndSolution, setTargetAndSolution] = useState(() => {
         const loadedTargetAndSolution = loadTargetAndSolutionFromLocalStorage();
         return loadedTargetAndSolution || generateTargetAndSolution(startingNumberSet);
     });
 
-    // Save the startingNumberSet to localStorage whenever it changes
+    // Save the targetAndSolution to localStorage whenever it changes
     useEffect(() => {
         saveTargetAndSolutionToLocalStorage(targetAndSolution);
     }, [targetAndSolution]);
 
-    // const startingNumberSet = useMemo(() => generateNumberSet(), []);
-    // const [target, solution] = useMemo(() => generateTarget(startingNumberSet), [startingNumberSet]);
     const { target, solution } = targetAndSolution;
 
     const [numberSetHistory, setNumberSetHistory] = useState([startingNumberSet]);
@@ -101,16 +89,9 @@ function Game() {
         const newStartingNumberSet = generateNumberSet();
         const newTargetAndSolution = generateTargetAndSolution(newStartingNumberSet);
     
-        // Update the startingNumberSet state
         setStartingNumberSet(newStartingNumberSet);
-    
-        // Update the targetAndSolution state
         setTargetAndSolution(newTargetAndSolution);
-    
-        // Update the numberSetHistory state with the new starting number set
         setNumberSetHistory([newStartingNumberSet]);
-    
-        // Reset other relevant states as needed
         setCurrentMove(0);
         setMoveHistory([]);
         clearBoard();
@@ -150,43 +131,39 @@ function Game() {
     }
   
     function handleOperatorClick(clickedOperatorFunction, clickedOperatorSign) {
-      console.log(`current sign: ${operationGroup.sign}`);
-      console.log(`current function: ${operationGroup.function}`);
-  
-      if (firstOperandNumber === null) {
-        clearBoard();
-      } else if (firstOperandNumber !== null && operationGroup.sign === null) {
-        setOperationGroup({
-          ...operationGroup,
-          function: clickedOperatorFunction,
-          sign: clickedOperatorSign
-        });
-        setSelectedOperator(clickedOperatorSign);
-      } else if (
-        firstOperandNumber !== null &&
-        operationGroup.function !== null &&
-        operationGroup.sign === clickedOperatorSign
-      ) {
-        console.log("here!");
-        setOperationGroup({
-          ...operationGroup,
-          function: null,
-          sign: null
-        });
-        setSelectedOperator(null);
-      } else if (
-        firstOperandNumber !== null &&
-        operationGroup.sign !== clickedOperatorSign
-      ) {
-        setOperationGroup({
-          ...operationGroup,
-          function: clickedOperatorFunction,
-          sign: clickedOperatorSign
-        });
-        setSelectedOperator(clickedOperatorSign);
-      } else {
-        clearBoard();
-      }
+        if (firstOperandNumber === null) {
+            clearBoard();
+        } else if (firstOperandNumber !== null && operationGroup.sign === null) {
+            setOperationGroup({
+            ...operationGroup,
+            function: clickedOperatorFunction,
+            sign: clickedOperatorSign
+            });
+            setSelectedOperator(clickedOperatorSign);
+        } else if (
+            firstOperandNumber !== null &&
+            operationGroup.function !== null &&
+            operationGroup.sign === clickedOperatorSign
+        ) {
+            setOperationGroup({
+            ...operationGroup,
+            function: null,
+            sign: null
+            });
+            setSelectedOperator(null);
+        } else if (
+            firstOperandNumber !== null &&
+            operationGroup.sign !== clickedOperatorSign
+        ) {
+            setOperationGroup({
+            ...operationGroup,
+            function: clickedOperatorFunction,
+            sign: clickedOperatorSign
+            });
+            setSelectedOperator(clickedOperatorSign);
+        } else {
+            clearBoard();
+        }
     }
   
     function handleUndoClick() {
@@ -213,39 +190,39 @@ function Game() {
     }
   
     function performValidOperation(clickedNumber, clickedPosition) {
-      const result = operationGroup.function(firstOperandNumber, clickedNumber);
-  
-      if (result % 1 === 0 && result >= 0) {
-        let newNumberSet = [...numberSetHistory[currentMove]];
-        newNumberSet[firstOperandPosition] = null;
-        newNumberSet[clickedPosition] = result;
-        setNumberSetHistory([...numberSetHistory, newNumberSet]);
-        setCurrentMove(currentMove + 1);
-  
-        setFirstOperandNumber(result);
-        setFirstOperandPosition(clickedPosition);
-  
-        setOperationGroup({
-          ...operationGroup,
-          function: null,
-          sign: null
-        });
-  
-        setSelectedPosition(clickedPosition);
-        setSelectedOperator(null);
-  
-        const operationText = `${firstOperandNumber} ${operationGroup.sign} ${clickedNumber} = ${result}`;
-        setMoveHistory([...moveHistory, operationText]);
-      } else {
-        setOperationGroup({
-          ...operationGroup,
-          function: null,
-          sign: null
-        });
-  
-        setSelectedPosition(firstOperandPosition);
-        setSelectedOperator(null);
-      }
+        const result = operationGroup.function(firstOperandNumber, clickedNumber);
+        // allowing negative numbers for now, otherwise add && result >= 0
+        if (result % 1 === 0) {
+            let newNumberSet = [...numberSetHistory[currentMove]];
+            newNumberSet[firstOperandPosition] = null;
+            newNumberSet[clickedPosition] = result;
+            setNumberSetHistory([...numberSetHistory, newNumberSet]);
+            setCurrentMove(currentMove + 1);
+    
+            setFirstOperandNumber(result);
+            setFirstOperandPosition(clickedPosition);
+    
+            setOperationGroup({
+            ...operationGroup,
+            function: null,
+            sign: null
+            });
+    
+            setSelectedPosition(clickedPosition);
+            setSelectedOperator(null);
+    
+            const operationText = `${firstOperandNumber} ${operationGroup.sign} ${clickedNumber} = ${result}`;
+            setMoveHistory([...moveHistory, operationText]);
+        } else {
+            setOperationGroup({
+            ...operationGroup,
+            function: null,
+            sign: null
+            });
+    
+            setSelectedPosition(firstOperandPosition);
+            setSelectedOperator(null);
+        }
     }
   
     function checkStarStatus() {
@@ -270,14 +247,8 @@ function Game() {
         for (let i = 1; i < moveHistory.length; i++) {
           const currentOperation = moveHistory[i];
           const previousOperation = moveHistory[i - 1];
-          console.log(
-            `current operation: ${currentOperation} | previous operation: ${previousOperation}`
-          );
           const currentOperand = getOperandFromOperation(currentOperation);
           const previousResult = getResultFromOperation(previousOperation);
-          console.log(
-            `current operand: ${currentOperand} | previous result: ${previousResult}`
-          );
           if (currentOperand !== previousResult) {
             return false;
           }
