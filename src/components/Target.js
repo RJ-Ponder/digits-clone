@@ -1,7 +1,7 @@
-function Target({ value }) {
+function Target({ target }) {
 	return (
 		<div className="target">
-			{ value }
+			{ target }
 		</div>
 	);
 }

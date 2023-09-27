@@ -1,12 +1,14 @@
 const NUMBER_SET_SIZE = 6;
-const MIN_NUMBER = 1;
-const MAX_NUMBER = 15;
+const NUMBER_SET_MIN = 1;
+const NUMBER_SET_MAX = 24;
+const TARGET_MIN = -100;
+const TARGET_MAX = 500;
 
 export function generateNumberSet() {
     let numberSet = [];
     
     while (numberSet.length < NUMBER_SET_SIZE) {
-        const randomInt = getRandomIntInclusive(MIN_NUMBER, MAX_NUMBER);
+        const randomInt = getRandomIntInclusive(NUMBER_SET_MIN, NUMBER_SET_MAX);
         
         if (!numberSet.includes(randomInt)) {
             numberSet.push(randomInt);
@@ -26,7 +28,7 @@ function getRandomIntInclusive(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-export function generateTarget(numberSet) {
+export function generateTargetAndSolution(numberSet) {
     const shuffledNumberSet = shuffle(numberSet.slice());
     let target = shuffledNumberSet[0];
     const solution = [];
@@ -37,7 +39,10 @@ export function generateTarget(numberSet) {
         solution.push(operation.operationText);
     }
     
-    return [target, solution];
+    return {
+        target: target,
+        solution: solution,
+    };
 }
 
 function shuffle(array) {
@@ -77,5 +82,5 @@ function performRandomOperation(num1, num2) {
 }
 
 function isValidResult(result) {
-    return result % 1 === 0 && result < 100 && result > 0;
+    return result % 1 === 0 && result < TARGET_MAX && result > TARGET_MIN;
 }

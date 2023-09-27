@@ -1,400 +1,71 @@
-// import logo from './logo.svg';
-// import './App.css';
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <h1>Hello this is my first app.</h1>
-//     </div>
-//   );
-// }
-
-// export default App;
-
-// run in terminal (ctrl + `) with npm start
-
-import { useState, useMemo, useEffect } from "react";
 import "./styles.css";
-import Target from "./components/Target";
-import { generateNumberSet, generateTarget } from "./utils/helpers";
+import Game from "./components/Game";
 
 export default function App() {
-  return (
-    <div className="App">
-      <Game />
-    </div>
-  );
-}
-
-function Game() {
-  const startingNumberSet = useMemo(() => generateNumberSet(), []);
-  const [target, solution] = useMemo(() => generateTarget(startingNumberSet), [
-    startingNumberSet
-  ]);
-
-  const [numberSetHistory, setNumberSetHistory] = useState([startingNumberSet]);
-  const [operationHistory, setOperationHistory] = useState([null]);
-  const [currentMove, setCurrentMove] = useState(0);
-
-  const [firstOperandNumber, setFirstOperandNumber] = useState(null);
-  const [firstOperandPosition, setFirstOperandPosition] = useState(null);
-
-  const [operationGroup, setOperationGroup] = useState({
-    function: null,
-    sign: null,
-    result: null
-  });
-  const [operationFunction, setOperationFunction] = useState(null);
-  const [operationSign, setOperationSign] = useState(null);
-  const [operationResult, setOperationResult] = useState(null);
-
-  const [selectedPosition, setSelectedPosition] = useState(null);
-  const [selectedOperator, setSelectedOperator] = useState(null);
-
-  const [operationStatus, setOperationStatus] = useState({
-    firstOperand: null,
-    firstOperandPosition: null,
-    operator: null,
-    operatorSign: null,
-    secondOperand: null,
-    result: null
-  });
-
-  const [starStatus, setStarStatus] = useState(0);
-  const [userOperationHistory, setUserOperationHistory] = useState([]);
-
-  useEffect(() => {
-    // This function will be called whenever myState changes
-    checkStarStatus();
-  }, [numberSetHistory, operationHistory, selectedPosition]);
-
-  function handleNumberClick(clickedPosition) {
-    const clickedNumber = numberSetHistory[currentMove][clickedPosition];
-
-    if (firstOperandPosition === clickedPosition) {
-      clearBoard();
-    } else if (
-      firstOperandNumber === null ||
-      (firstOperandNumber !== null && operationGroup.function === null)
-    ) {
-      setFirstOperandNumber(clickedNumber);
-      setFirstOperandPosition(clickedPosition);
-      setSelectedPosition(clickedPosition);
-    } else if (
-      firstOperandNumber !== null &&
-      operationGroup.function !== null
-    ) {
-      performValidOperation(clickedNumber, clickedPosition);
-    } else {
-      clearBoard();
-    }
-  }
-
-  function handleOperatorClick(clickedOperatorFunction, clickedOperatorSign) {
-    console.log(`current sign: ${operationGroup.sign}`);
-    console.log(`current function: ${operationGroup.function}`);
-
-    if (firstOperandNumber === null) {
-      clearBoard();
-    } else if (firstOperandNumber !== null && operationGroup.sign === null) {
-      setOperationGroup({
-        ...operationGroup,
-        function: clickedOperatorFunction,
-        sign: clickedOperatorSign
-      });
-      setSelectedOperator(clickedOperatorSign);
-    } else if (
-      firstOperandNumber !== null &&
-      operationGroup.function !== null &&
-      operationGroup.sign === clickedOperatorSign
-    ) {
-      console.log("here!");
-      setOperationGroup({
-        ...operationGroup,
-        function: null,
-        sign: null
-      });
-      setSelectedOperator(null);
-    } else if (
-      firstOperandNumber !== null &&
-      operationGroup.sign !== clickedOperatorSign
-    ) {
-      setOperationGroup({
-        ...operationGroup,
-        function: clickedOperatorFunction,
-        sign: clickedOperatorSign
-      });
-      setSelectedOperator(clickedOperatorSign);
-    } else {
-      clearBoard();
-    }
-  }
-
-  function handleUndoClick() {
-    clearBoard(); // add functionality to keep on selected first operand
-    if (currentMove > 0) {
-      setNumberSetHistory(numberSetHistory.slice(0, -1));
-      setCurrentMove(currentMove - 1);
-      setUserOperationHistory(userOperationHistory.slice(0, -1)); // Remove the latest operation from the history
-    }
-  }
-
-  function clearBoard() {
-    setFirstOperandNumber(null);
-    setFirstOperandPosition(null);
-
-    setOperationGroup({
-      function: null,
-      sign: null,
-      result: null
-    });
-
-    setSelectedPosition(null);
-    setSelectedOperator(null);
-  }
-
-  function performValidOperation(clickedNumber, clickedPosition) {
-    const result = operationGroup.function(firstOperandNumber, clickedNumber);
-
-    if (result % 1 === 0 && result >= 0) {
-      let newNumberSet = [...numberSetHistory[currentMove]];
-      newNumberSet[firstOperandPosition] = null;
-      newNumberSet[clickedPosition] = result;
-      setNumberSetHistory([...numberSetHistory, newNumberSet]);
-      setCurrentMove(currentMove + 1);
-
-      setFirstOperandNumber(result);
-      setFirstOperandPosition(clickedPosition);
-
-      setOperationGroup({
-        ...operationGroup,
-        function: null,
-        sign: null
-      });
-
-      setSelectedPosition(clickedPosition);
-      setSelectedOperator(null);
-
-      const operationText = `${firstOperandNumber} ${operationGroup.sign} ${clickedNumber} = ${result}`;
-      setUserOperationHistory([...userOperationHistory, operationText]);
-    } else {
-      setOperationGroup({
-        ...operationGroup,
-        function: null,
-        sign: null
-      });
-
-      setSelectedPosition(firstOperandPosition);
-      setSelectedOperator(null);
-    }
-  }
-
-  function checkStarStatus() {
-    const number = numberSetHistory[currentMove][selectedPosition];
-
-    let starStatus = 0;
-    if (number === target && isChainOperation() && isAllNumbersUsed()) {
-      starStatus = 3;
-    } else if (number === target && isAllNumbersUsed()) {
-      starStatus = 2;
-    } else if (number === target) {
-      starStatus = 1;
-    }
-
-    setStarStatus(starStatus);
-  }
-
-  function isChainOperation() {
-    if (isAllNumbersUsed() === false) {
-      return false;
-    } else {
-      for (let i = 1; i < userOperationHistory.length; i++) {
-        const currentOperation = userOperationHistory[i];
-        const previousOperation = userOperationHistory[i - 1];
-        console.log(
-          `current operation: ${currentOperation} | previous operation: ${previousOperation}`
-        );
-        const currentOperand = getOperandFromOperation(currentOperation);
-        const previousResult = getResultFromOperation(previousOperation);
-        console.log(
-          `current operand: ${currentOperand} | previous result: ${previousResult}`
-        );
-        if (currentOperand !== previousResult) {
-          return false;
-        }
-      }
-      return true;
-    }
-  }
-
-  function isAllNumbersUsed() {
-    return userOperationHistory.length === 5;
-  }
-
-  function getOperandFromOperation(operation) {
-    if (typeof operation !== "string" || operation.trim() === "") {
-      // Handle the case when the operation is undefined, not a string, or an empty string
-      return "";
-    }
-
-    const operands = operation.split(" ");
-    if (operands.length > 0) {
-      return operands[0];
-    }
-
-    return "";
-  }
-
-  function getResultFromOperation(operation) {
-    if (typeof operation !== "string" || operation.trim() === "") {
-      return "";
-    }
-
-    const result = operation.split("=")[1];
-    if (typeof result !== "string") {
-      return "";
-    }
-
-    return result.trim();
-  }
-
-  function getOperandsFromOperation(operation) {
-    if (typeof operation !== "string" || operation.trim() === "") {
-      return [];
-    }
-
-    const operands = operation
-      .split(/[+\-×÷=]/)
-      .map((operand) => operand.trim());
-    return operands.filter(
-      (operand) => typeof operand === "string" && operand !== ""
-    );
-  }
-
-  return (
-    <div id="main-content">
-      <div id="game-content">
-        <div id="game">
-          <Target value={ target } />
-          <Numbers
-            numberSet={numberSetHistory[currentMove]}
-            selectedPosition={selectedPosition}
-            onPlay={handleNumberClick}
-          />
-          <div id="operation-history">
-            <h3>Your moves:</h3>
-            <ul>
-              {userOperationHistory.map((operation, index) => (
-                <li key={index}>{operation}</li>
-              ))}
-            </ul>
-          </div>
-
-          <Operations
-            selectedOperator={selectedOperator}
-            onOperatorClick={handleOperatorClick}
-            onUndoClick={handleUndoClick}
-          />
-          <Submit />
-          <NewGame />
-          <div>{solution.join(" | ")}</div>
+    return (
+        <div className="App">
+            <Game />
         </div>
-      </div>
-    </div>
-  );
+    );
 }
 
-function Numbers({ numberSet, onPlay, selectedPosition }) {
-  return (
-    <div id="numbers">
-      {numberSet.map((number, index) => (
-        <Number
-          key={index}
-          value={number}
-          className={`number ${selectedPosition === index ? "active" : ""}`}
-          position={`number-pos-${index}`}
-          onNumberClick={() => onPlay(index)}
-        />
-      ))}
-    </div>
-  );
-}
+// Notes:
+// - try to collect as many stars as possible
+// - max of 3 stars per game, can also earn 1 or 2
+// - if you give up to see solution you lose the right to earn any more stars than what you already collected
+// - when you choose to collect, you have the chance to keep playing for more stars or start a new game
+// - keep track of the number of 1 star games, 2 star games, and 3 star games
+// - user clicks on the total stars to see the break down
+// - find a way to obfuscate the data in local storage so it’s not easy for a user to cheat and modify the number of stars they have
+// - do data validation when reading from local storage
+// - if a user starts a new game they lose the chance to collect any more stars
+// - add messaging for each of the paths
+// - add instructions and a simple menu
+// - allow the user to start as many new games as they want
 
-function Number({ value, onNumberClick, className, position }) {
-  return (
-    <div className={className} id={position} onClick={onNumberClick}>
-      {value}
-    </div>
-  );
-}
+// npm install crypto-js
+// const CryptoJS = require('crypto-js');
 
-function Operations({ onOperatorClick, onUndoClick, selectedOperator }) {
-  return (
-    <div id="operations">
-      <button id="undo" aria-label="undo" onClick={() => onUndoClick()}>
-        <Undo />
-      </button>
-      <button
-        className={`operation ${selectedOperator === "+" ? "active" : ""}`}
-        id="+"
-        aria-label="add"
-        onClick={() => onOperatorClick((a, b) => a + b, "+")}
-      >
-        <Operation value="+" />
-      </button>
-      <button
-        className={`operation ${selectedOperator === "-" ? "active" : ""}`}
-        id="-"
-        aria-label="subtract"
-        onClick={() => onOperatorClick((a, b) => a - b, "-")}
-      >
-        <Operation value="-" />
-      </button>
-      <button
-        className={`operation ${selectedOperator === "×" ? "active" : ""}`}
-        id="×"
-        aria-label="multiply"
-        onClick={() => onOperatorClick((a, b) => a * b, "×")}
-      >
-        <Operation value="×" />
-      </button>
-      <button
-        className={`operation ${selectedOperator === "÷" ? "active" : ""}`}
-        id="÷"
-        aria-label="divide"
-        onClick={() => onOperatorClick((a, b) => a / b, "÷")}
-      >
-        <Operation value="÷" />
-      </button>
-    </div>
-  );
-}
+// .env or .env.local file to store which you add to gitignore
+// SECRET_KEY=YourSecretKeyHere
 
-function Operation({ value }) {
-  // <span class="icon-add">+</span>
-  return <span>{value}</span>;
-}
+// require('dotenv').config();
 
-function Undo() {
-  return <span class="material-symbols-outlined">replay</span>;
-}
+// // Retrieve the secret key
+// const secretKey = process.env.SECRET_KEY;
 
-function Submit() {
-  return (
-    <div id="submit-and-share-buttons">
-      <div id="submit-button" className="oblong-button">
-        Submit
-      </div>
-    </div>
-  );
-}
+// Encryption:
 
-function NewGame() {
-  return (
-    <div id="submit-and-share-buttons">
-      <div id="submit-button" className="oblong-button">
-        New Game
-      </div>
-    </div>
-  );
-}
+// When saving data to local storage, encrypt the JSON object using a secret key:
+// // Your JSON object
+// const dataToEncrypt = { stars: 10, score: 100 };
+
+// // Convert the JSON object to a string
+// const jsonString = JSON.stringify(dataToEncrypt);
+
+// // Secret encryption key (keep this secure)
+// const secretKey = 'YourSecretKey';
+
+// // Encrypt the data
+// const encryptedData = CryptoJS.AES.encrypt(jsonString, secretKey).toString();
+
+// // Save the encrypted data to local storage
+// localStorage.setItem('encryptedData', encryptedData);
+
+// Decryption:
+
+// When retrieving data from local storage, decrypt it using the same secret key:
+// // Retrieve the encrypted data from local storage
+// const encryptedData = localStorage.getItem('encryptedData');
+
+// // Secret decryption key (must be the same as the one used for encryption)
+// const secretKey = 'YourSecretKey';
+
+// // Decrypt the data
+// const decryptedBytes = CryptoJS.AES.decrypt(encryptedData, secretKey);
+
+// // Convert the decrypted bytes back to a JSON object
+// const decryptedData = JSON.parse(decryptedBytes.toString(CryptoJS.enc.Utf8));
+
+// // Now you have the decrypted JSON object
+// console.log(decryptedData);
