@@ -9,6 +9,22 @@ export default function App() {
     );
 }
 
+
+// STAR COLLECTION ARCHITECTURE
+    // each game that is randomly generated needs to have a unique id
+    // if stars are earned for that unique id game, cannot earn the same number
+        // gameID: 0
+        // gameID: 1
+        // gameID: 2
+        // gameID: 3
+    // Collect stars checks the gameID object
+        // if 0, allow 1, 2, or 3
+        // if 1, and 1, say you've already collected 1 star, try for more?
+        // if 2, only 3
+        // if 3
+
+
+
 // Notes:
 // - try to collect as many stars as possible
 // - max of 3 stars per game, can also earn 1 or 2
@@ -22,6 +38,7 @@ export default function App() {
 // - add messaging for each of the paths
 // - add instructions and a simple menu
 // - allow the user to start as many new games as they want
+// - handle case where user can modify local storage and get an error
 
 // npm install crypto-js
 // const CryptoJS = require('crypto-js');

@@ -1,7 +1,7 @@
 function Star({ starStatus }) {
 	return (
 		<div id="starStatus">
-            Number of stars: {starStatus}
+            Number of stars available to collect: {starStatus}
         </div>
 	);
 }

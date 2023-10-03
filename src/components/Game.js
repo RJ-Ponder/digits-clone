@@ -1,3 +1,4 @@
+import TotalStars from "./TotalStars";
 import Star from "./Star";
 import Target from "./Target";
 import Numbers from "./Numbers";
@@ -10,36 +11,42 @@ import Solution from "./Solution";
 import { useState, useMemo, useEffect } from "react";
 import { generateNumberSet, generateTargetAndSolution } from "../utils/helpers";
 
+const { v4: uuidv4 } = require('uuid');
+
+// Generate a new UUID
+
+function saveDataToLocalStorage(key, data) {
+    const encodedData = btoa(JSON.stringify(data));
+    localStorage.setItem(key, encodedData);
+}
+  
+function loadDataFromLocalStorage(key) {
+    const encodedSavedData = localStorage.getItem(key);
+  
+    if (encodedSavedData) {
+      const decodedSavedData = atob(encodedSavedData);
+      return JSON.parse(decodedSavedData);
+    }
+  
+    return null;
+}
+  
 function saveStartingNumberSetToLocalStorage(startingNumberSet) {
-    const gameState = {
-        startingNumberSet: startingNumberSet,
-    };
-    localStorage.setItem('startingNumberSet', JSON.stringify(gameState));
+    saveDataToLocalStorage('sns', { startingNumberSet });
 }
   
 function loadStartingNumberSetFromLocalStorage() {
-    const savedGameState = localStorage.getItem('startingNumberSet');
-    if (savedGameState) {
-        const gameState = JSON.parse(savedGameState);
-        return gameState.startingNumberSet;
-    }
-    return null;
+    const data = loadDataFromLocalStorage('sns');
+    return data ? data.startingNumberSet : null;
 }
-
+  
 function saveTargetAndSolutionToLocalStorage(targetAndSolution) {
-    const gameState = {
-        targetAndSolution: targetAndSolution,
-    };
-    localStorage.setItem('targetAndSolution', JSON.stringify(gameState));
+    saveDataToLocalStorage('tas', { targetAndSolution });
 }
   
 function loadTargetAndSolutionFromLocalStorage() {
-    const savedGameState = localStorage.getItem('targetAndSolution');
-    if (savedGameState) {
-        const gameState = JSON.parse(savedGameState);
-        return gameState.targetAndSolution;
-    }
-    return null;
+    const data = loadDataFromLocalStorage('tas');
+    return data ? data.targetAndSolution : null;
 }
 
 function Game() {
@@ -84,6 +91,10 @@ function Game() {
     const [moveHistory, setMoveHistory] = useState([]);
     
     function startNewGame() {
+        const uuid = uuidv4();
+
+        console.log(uuid);
+
         clearLocalStorage();
     
         const newStartingNumberSet = generateNumberSet();
@@ -305,7 +316,8 @@ function Game() {
       <div id="main-content">
         <div id="game-content">
           <div id="game">
-            <Star starStatus={starStatus}/>
+            <TotalStars totalStars={0} />
+            <Star starStatus={starStatus} />
             <Target target={target} />
             <Numbers
               numberSet={numberSetHistory[currentMove]}
