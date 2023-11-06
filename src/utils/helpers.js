@@ -1,8 +1,9 @@
 const NUMBER_SET_SIZE = 6;
 const NUMBER_SET_MIN = 1;
 const NUMBER_SET_MAX = 15;
-const TARGET_MIN = -200;
-const TARGET_MAX = 200;
+const TARGET_MIN = -50;
+const TARGET_MAX = 50;
+const { v4: uuidv4 } = require('uuid');
 
 export function generateNumberSet() {
     let numberSet = [];
@@ -83,4 +84,59 @@ function performRandomOperation(num1, num2) {
 
 function isValidResult(result) {
     return result % 1 === 0 && result < TARGET_MAX && result > TARGET_MIN;
+}
+
+export function generateGameInfo() {
+    const uuid = uuidv4();
+
+    return { id: uuid, stars: 0 };
+}
+
+// // encoded version
+// export function saveDataToLocalStorage(key, data) {
+//     const encodedData = btoa(JSON.stringify(data));
+//     localStorage.setItem(key, encodedData);
+// }
+
+// // encoded version
+// export function loadDataFromLocalStorage(key) {
+//     const encodedSavedData = localStorage.getItem(key);
+  
+//     if (encodedSavedData) {
+//       try {
+//         const decodedSavedData = atob(encodedSavedData);
+//         return JSON.parse(decodedSavedData);
+//       } catch (error) {
+//         // This block will run if an error occurs in the try block
+//         // You can handle the error here, log it, or perform any necessary actions
+//         console.error('An error occurred:', error);
+//         return null;
+//       }
+//     }
+  
+//     return null;
+// }
+
+// unencoded version
+export function saveDataToLocalStorage(key, data) {
+    const encodedData = JSON.stringify(data);
+    localStorage.setItem(key, encodedData);
+}
+
+// unencoded version
+export function loadDataFromLocalStorage(key) {
+    const encodedSavedData = localStorage.getItem(key);
+  
+    if (encodedSavedData) {
+      try {
+        return JSON.parse(encodedSavedData);
+      } catch (error) {
+        // This block will run if an error occurs in the try block
+        // You can handle the error here, log it, or perform any necessary actions
+        console.error('An error occurred:', error);
+        return null;
+      }
+    }
+  
+    return null;
 }

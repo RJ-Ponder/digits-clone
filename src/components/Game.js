@@ -9,66 +9,58 @@ import History from "./History";
 import Solution from "./Solution";
 
 import { useState, useMemo, useEffect } from "react";
-import { generateNumberSet, generateTargetAndSolution } from "../utils/helpers";
+import { generateNumberSet, generateTargetAndSolution, generateGameInfo, saveDataToLocalStorage, loadDataFromLocalStorage } from "../utils/helpers";
+import { clear } from "@testing-library/user-event/dist/clear";
 
-const { v4: uuidv4 } = require('uuid');
-
-// Generate a new UUID
-
-function saveDataToLocalStorage(key, data) {
-    const encodedData = btoa(JSON.stringify(data));
-    localStorage.setItem(key, encodedData);
-}
-  
-function loadDataFromLocalStorage(key) {
-    const encodedSavedData = localStorage.getItem(key);
-  
-    if (encodedSavedData) {
-      const decodedSavedData = atob(encodedSavedData);
-      return JSON.parse(decodedSavedData);
-    }
-  
-    return null;
-}
-  
-function saveStartingNumberSetToLocalStorage(startingNumberSet) {
-    saveDataToLocalStorage('sns', { startingNumberSet });
-}
-  
-function loadStartingNumberSetFromLocalStorage() {
-    const data = loadDataFromLocalStorage('sns');
-    return data ? data.startingNumberSet : null;
-}
-  
-function saveTargetAndSolutionToLocalStorage(targetAndSolution) {
-    saveDataToLocalStorage('tas', { targetAndSolution });
-}
-  
-function loadTargetAndSolutionFromLocalStorage() {
-    const data = loadDataFromLocalStorage('tas');
-    return data ? data.targetAndSolution : null;
-}
+const STARTING_NUMBER_SET = 'sns';
+const TARGET_AND_SOLUTION = 'tas';
+const GAME_INFO = 'gi';
+const TOTAL_STARS = 'ts';
 
 function Game() {
+    // Load the startingNumberSet from localStorage or generate a new number set
     const [startingNumberSet, setStartingNumberSet] = useState(() => {
-        const loadedStartingNumberSet = loadStartingNumberSetFromLocalStorage();
+        const loadedStartingNumberSet = loadDataFromLocalStorage(STARTING_NUMBER_SET);
         return loadedStartingNumberSet || generateNumberSet();
     });
 
     // Save the startingNumberSet to localStorage whenever it changes
     useEffect(() => {
-        saveStartingNumberSetToLocalStorage(startingNumberSet);
+        saveDataToLocalStorage(STARTING_NUMBER_SET, startingNumberSet);
     }, [startingNumberSet]);
 
+    // Load the targetAndSolution from localStorage or generate a new target and solution
     const [targetAndSolution, setTargetAndSolution] = useState(() => {
-        const loadedTargetAndSolution = loadTargetAndSolutionFromLocalStorage();
+        const loadedTargetAndSolution = loadDataFromLocalStorage(TARGET_AND_SOLUTION);
         return loadedTargetAndSolution || generateTargetAndSolution(startingNumberSet);
     });
 
     // Save the targetAndSolution to localStorage whenever it changes
     useEffect(() => {
-        saveTargetAndSolutionToLocalStorage(targetAndSolution);
+        saveDataToLocalStorage(TARGET_AND_SOLUTION, targetAndSolution);
     }, [targetAndSolution]);
+
+    // Load the gameInfo from localStorage or generate a new game ID
+    const [gameInfo, setGameInfo] = useState(() => {
+        const loadedGameId = loadDataFromLocalStorage(GAME_INFO);
+        return loadedGameId || generateGameInfo(startingNumberSet);
+    });
+
+    // Save the gameId to localStorage whenever it changes
+    useEffect(() => {
+        saveDataToLocalStorage(GAME_INFO, gameInfo);
+    }, [gameInfo]);
+
+    // Load the totalStars from localStorage or start over from 0
+    const [totalStars, setTotalStars] = useState(() => {
+        const collectedTotalStars = loadDataFromLocalStorage(TOTAL_STARS);
+        return collectedTotalStars || 0;
+    });
+
+    // Save the totalStars to localStorage whenever it changes
+    useEffect(() => {
+        saveDataToLocalStorage(TOTAL_STARS, totalStars);
+    }, [totalStars]);
 
     const { target, solution } = targetAndSolution;
 
@@ -87,35 +79,28 @@ function Game() {
     const [selectedPosition, setSelectedPosition] = useState(null);
     const [selectedOperator, setSelectedOperator] = useState(null);
   
-    const [starStatus, setStarStatus] = useState(0);
+    const [earnedStars, setEarnedStars] = useState(0);
     const [moveHistory, setMoveHistory] = useState([]);
+	const [positionHistory, setPositionHistory] = useState([]);
     
     function startNewGame() {
-        const uuid = uuidv4();
-
-        console.log(uuid);
-
-        clearLocalStorage();
-    
         const newStartingNumberSet = generateNumberSet();
         const newTargetAndSolution = generateTargetAndSolution(newStartingNumberSet);
+        const newGameInfo = generateGameInfo();
     
         setStartingNumberSet(newStartingNumberSet);
         setTargetAndSolution(newTargetAndSolution);
+        setGameInfo(newGameInfo);
         setNumberSetHistory([newStartingNumberSet]);
         setCurrentMove(0);
         setMoveHistory([]);
+		setPositionHistory([]);
         clearBoard();
-    }
-
-    function clearLocalStorage() {
-        localStorage.removeItem('startingNumberSet');
-        localStorage.removeItem('targetAndSolution');
     }
 
     // checkStarStatus will be called whenever any of the dependencies changes
     useEffect(() => {
-        checkStarStatus();
+        checkEarnedStars();
     }, [numberSetHistory, moveHistory, selectedPosition]);
 
     function handleNumberClick(clickedPosition) {
@@ -177,28 +162,116 @@ function Game() {
         }
     }
   
-    function handleUndoClick() {
-      clearBoard(); // add functionality to keep on selected first operand
-      if (currentMove > 0) {
-        setNumberSetHistory(numberSetHistory.slice(0, -1));
-        setCurrentMove(currentMove - 1);
-        setMoveHistory(moveHistory.slice(0, -1)); // Remove the latest operation from the history
-      }
+    // function handleUndoClick() {  
+	// 	if (currentMove > 0) {
+	// 		clearBoard(true);
+	// 		setSelectedPosition(positionHistory[currentMove - 1]);
+	// 		setPositionHistory(positionHistory.slice(0, -1));
+	// 		setNumberSetHistory(numberSetHistory.slice(0, -1));
+	// 		setCurrentMove(currentMove - 1);
+	// 		setMoveHistory(moveHistory.slice(0, -1)); // Remove the latest operation from the history
+	// 	} else {
+	// 		clearBoard();
+	// 	}
+    // }
+
+    function handleCollectClick() {
+		const collectedStars = loadDataFromLocalStorage(GAME_INFO).stars;
+        if (collectedStars < earnedStars) {
+        	const gameId = loadDataFromLocalStorage(GAME_INFO).id;
+            setGameInfo({id: gameId, stars: earnedStars});
+            saveDataToLocalStorage(GAME_INFO, {id: gameId, stars: earnedStars});
+            const totalCollectedStars = totalStars + earnedStars - collectedStars;
+            setTotalStars(totalCollectedStars);
+        }
+		setEarnedStars(0);
     }
   
-    function clearBoard() {
-      setFirstOperandNumber(null);
-      setFirstOperandPosition(null);
+    // function clearBoard(isUndo = false) {		
+    //   	setFirstOperandNumber(null);
+    //   	setFirstOperandPosition(null);
   
-      setOperationGroup({
-        function: null,
-        sign: null,
-        result: null
-      });
+	// 	setOperationGroup({
+	// 		function: null,
+	// 		sign: null,
+	// 		result: null
+	// 	});
   
-      setSelectedPosition(null);
-      setSelectedOperator(null);
-    }
+	// 	setSelectedOperator(null);
+
+	// 	if (!isUndo) {
+	// 		setSelectedPosition(null);
+	// 	}
+    // }
+
+	// This function handles the action to undo the last move made.
+function handleUndoClick() {
+	// Check if there is a move to undo.
+	if (currentMove > 0) {
+	  // Clear the board while maintaining the undo state.
+	  clearBoardForUndo();
+	  // Revert to the previous position.
+	  revertToPreviousPosition();
+	  // Update the history to reflect the undone move.
+	  updateHistoryForUndo();
+	  // Decrement the move counter.
+	  decrementCurrentMove();
+	} else {
+	  // If there are no moves to undo, simply clear the board.
+	  clearBoard();
+	}
+  }
+  
+  // This function clears the board and, if it is an undo action, maintains the last selected position.
+  function clearBoard(isUndo = false) {
+	resetOperands();
+	resetOperationGroup();
+  
+	// Clear the selected operator, this happens regardless of undo.
+	setSelectedOperator(null);
+  
+	// If the clearBoard is not part of an undo, also clear the selected position.
+	if (!isUndo) {
+	  setSelectedPosition(null);
+	}
+  }
+  
+  // Clears the board specifically for an undo action, encapsulating the shared logic.
+  function clearBoardForUndo() {
+	clearBoard(true);
+  }
+  
+  // Reverts the selected position to the one before the current move.
+  function revertToPreviousPosition() {
+	setSelectedPosition(positionHistory[currentMove - 1]);
+  }
+  
+  // Updates the various histories for an undo action by removing the last entry.
+  function updateHistoryForUndo() {
+	setPositionHistory(positionHistory.slice(0, -1));
+	setNumberSetHistory(numberSetHistory.slice(0, -1));
+	setMoveHistory(moveHistory.slice(0, -1)); // Remove the latest operation from the history.
+  }
+  
+  // Decrements the current move counter as part of an undo action.
+  function decrementCurrentMove() {
+	setCurrentMove(currentMove - 1);
+  }
+  
+  // Resets the first operand number and position to null.
+  function resetOperands() {
+	setFirstOperandNumber(null);
+	setFirstOperandPosition(null);
+  }
+  
+  // Resets the operation group to null values.
+  function resetOperationGroup() {
+	setOperationGroup({
+	  function: null,
+	  sign: null,
+	  result: null
+	});
+  }
   
     function performValidOperation(clickedNumber, clickedPosition) {
         const result = operationGroup.function(firstOperandNumber, clickedNumber);
@@ -209,6 +282,7 @@ function Game() {
             newNumberSet[clickedPosition] = result;
             setNumberSetHistory([...numberSetHistory, newNumberSet]);
             setCurrentMove(currentMove + 1);
+			setPositionHistory([...positionHistory, firstOperandPosition]);
     
             setFirstOperandNumber(result);
             setFirstOperandPosition(clickedPosition);
@@ -236,54 +310,56 @@ function Game() {
         }
     }
   
-    function checkStarStatus() {
-      const number = numberSetHistory[currentMove][selectedPosition];
-  
-      let starStatus = 0;
-      if (number === target && isChainOperation() && isAllNumbersUsed()) {
-        starStatus = 3;
-      } else if (number === target && isAllNumbersUsed()) {
-        starStatus = 2;
-      } else if (number === target) {
-        starStatus = 1;
-      }
-  
-      setStarStatus(starStatus);
+    function checkEarnedStars() {
+		const number = numberSetHistory[currentMove][selectedPosition];
+      	// const collectedStars = loadDataFromLocalStorage(GAME_INFO).stars;
+      	let earnedStars = 0;
+      	if (number === target && isChainOperation() && isAllNumbersUsed()) {
+    		earnedStars = 3;
+		} else if (number === target && isAllNumbersUsed()) {
+			earnedStars = 2;
+		} else if (number === target) {
+			earnedStars = 1;
+		}
+		
+		// if (earnedStars > collectedStars) {
+			setEarnedStars(earnedStars);
+		// }
     }
-  
+
     function isChainOperation() {
-      if (isAllNumbersUsed() === false) {
-        return false;
-      } else {
-        for (let i = 1; i < moveHistory.length; i++) {
-          const currentOperation = moveHistory[i];
-          const previousOperation = moveHistory[i - 1];
-          const currentOperand = getOperandFromOperation(currentOperation);
-          const previousResult = getResultFromOperation(previousOperation);
-          if (currentOperand !== previousResult) {
-            return false;
-          }
-        }
-        return true;
-      }
+		if (isAllNumbersUsed() === false) {
+			return false;
+		} else {
+			for (let i = 1; i < moveHistory.length; i++) {
+				const currentOperation = moveHistory[i];
+				const previousOperation = moveHistory[i - 1];
+				const currentOperand = getOperandFromOperation(currentOperation);
+				const previousResult = getResultFromOperation(previousOperation);
+				if (currentOperand !== previousResult) {
+					return false;
+				}
+			}
+			return true;
+		}
     }
   
     function isAllNumbersUsed() {
-      return moveHistory.length === 5;
+      	return moveHistory.length === 5;
     }
   
     function getOperandFromOperation(operation) {
-      if (typeof operation !== "string" || operation.trim() === "") {
-        // Handle the case when the operation is undefined, not a string, or an empty string
-        return "";
-      }
-  
-      const operands = operation.split(" ");
-      if (operands.length > 0) {
-        return operands[0];
-      }
-  
-      return "";
+		if (typeof operation !== "string" || operation.trim() === "") {
+			// Handle the case when the operation is undefined, not a string, or an empty string
+			return "";
+		}
+	
+		const operands = operation.split(" ");
+		if (operands.length > 0) {
+			return operands[0];
+		}
+	
+		return "";
     }
   
     function getResultFromOperation(operation) {
@@ -313,31 +389,31 @@ function Game() {
     }
   
     return (
-      <div id="main-content">
-        <div id="game-content">
-          <div id="game">
-            <TotalStars totalStars={0} />
-            <Star starStatus={starStatus} />
-            <Target target={target} />
-            <Numbers
-              numberSet={numberSetHistory[currentMove]}
-              selectedPosition={selectedPosition}
-              handleNumberClick={handleNumberClick}
-            />
-            <Operations
-              selectedOperator={selectedOperator}
-              handleOperatorClick={handleOperatorClick}
-              handleUndoClick={handleUndoClick}
-            />
-            <Collect />
-            <NewGame 
-                startNewGame={startNewGame}
-            />
-            <History history={moveHistory} />
-            <Solution solution={solution}/>
-          </div>
-        </div>
-      </div>
+		<div id="game-content">
+			<div id="game">
+				<TotalStars totalStars={totalStars} />
+				<Star earnedStars={earnedStars} collectedStars={gameInfo.stars}/>
+				<Target target={target} />
+				<Numbers
+				numberSet={numberSetHistory[currentMove]}
+				selectedPosition={selectedPosition}
+				handleNumberClick={handleNumberClick}
+				/>
+				<Operations
+				selectedOperator={selectedOperator}
+				handleOperatorClick={handleOperatorClick}
+				handleUndoClick={handleUndoClick}
+				/>
+				<Collect 
+					handleCollectClick={handleCollectClick}
+				/>
+				<NewGame 
+					startNewGame={startNewGame}
+				/>
+				<History history={moveHistory} />
+				<Solution solution={solution}/>
+			</div>
+		</div>
     );
 }
   

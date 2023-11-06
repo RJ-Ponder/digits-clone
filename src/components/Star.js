@@ -1,8 +1,15 @@
-function Star({ starStatus }) {
+function Star({ earnedStars, collectedStars }) {
+	const numberOfSolidStars = earnedStars > collectedStars ? earnedStars : collectedStars;
+  
 	return (
 		<div id="starStatus">
-            Number of stars available to collect: {starStatus}
-        </div>
+		{[1, 2, 3].map((index) => (
+			<i
+			key={index}
+			className={`fa-${index <= numberOfSolidStars ? 'solid' : 'regular'} fa-star puzzle-star`}
+			></i>
+		))}
+		</div>
 	);
 }
 

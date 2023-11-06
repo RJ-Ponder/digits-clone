@@ -1,10 +1,8 @@
-function Collect() {
+function Collect({handleCollectClick}) {
     return (
-        <div id="submit-and-share-buttons">
-            <div id="submit-button" className="oblong-button">
-                Collect Stars
-            </div>
-        </div>
+        <button id="collect" className="oblong-button" onClick={handleCollectClick}>
+            Collect
+        </button>
     );
 }
 

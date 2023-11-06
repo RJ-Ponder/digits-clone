@@ -1,29 +1,17 @@
 import "./styles.css";
+import Menu from "./components/Menu";
 import Game from "./components/Game";
 
 export default function App() {
     return (
-        <div className="App">
-            <Game />
+        <div id="app">
+            <div id="main-content">
+                <Menu />
+                <Game />
+            </div>
         </div>
     );
 }
-
-
-// STAR COLLECTION ARCHITECTURE
-    // each game that is randomly generated needs to have a unique id
-    // if stars are earned for that unique id game, cannot earn the same number
-        // gameID: 0
-        // gameID: 1
-        // gameID: 2
-        // gameID: 3
-    // Collect stars checks the gameID object
-        // if 0, allow 1, 2, or 3
-        // if 1, and 1, say you've already collected 1 star, try for more?
-        // if 2, only 3
-        // if 3
-
-
 
 // Notes:
 // - try to collect as many stars as possible
@@ -31,6 +19,7 @@ export default function App() {
 // - if you give up to see solution you lose the right to earn any more stars than what you already collected
 // - when you choose to collect, you have the chance to keep playing for more stars or start a new game
 // - keep track of the number of 1 star games, 2 star games, and 3 star games
+// - have a way to reset all statistics
 // - user clicks on the total stars to see the break down
 // - find a way to obfuscate the data in local storage so it’s not easy for a user to cheat and modify the number of stars they have
 // - do data validation when reading from local storage

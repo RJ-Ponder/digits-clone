@@ -1,52 +1,38 @@
 function Operations({ selectedOperator, handleOperatorClick, handleUndoClick }) {
+    const operationIcons = {
+        "+": "fa-plus",
+        "-": "fa-minus",
+        "×": "fa-times",
+        "÷": "fa-divide",
+    };
+
     return (
         <div id="operations">
-            <button id="undo" aria-label="undo" onClick={() => handleUndoClick()}>
-                <Undo />
+            <button id="undo" aria-label="Undo" onClick={handleUndoClick}>
+                <span className="fa-solid fa-undo"></span>
             </button>
-            <button
-                className={`operation ${selectedOperator === "+" ? "active" : ""}`}
-                id="+"
-                aria-label="add"
-                onClick={() => handleOperatorClick((a, b) => a + b, "+")}
-            >
-                <Operation value="+" />
-            </button>
-            <button
-                className={`operation ${selectedOperator === "-" ? "active" : ""}`}
-                id="-"
-                aria-label="subtract"
-                onClick={() => handleOperatorClick((a, b) => a - b, "-")}
-            >
-                <Operation value="-" />
-            </button>
-            <button
-                className={`operation ${selectedOperator === "×" ? "active" : ""}`}
-                id="×"
-                aria-label="multiply"
-                onClick={() => handleOperatorClick((a, b) => a * b, "×")}
-            >
-                <Operation value="×" />
-            </button>
-            <button
-                className={`operation ${selectedOperator === "÷" ? "active" : ""}`}
-                id="÷"
-                aria-label="divide"
-                onClick={() => handleOperatorClick((a, b) => a / b, "÷")}
-            >
-                <Operation value="÷" />
-            </button>
+            {Object.entries(operationIcons).map(([symbol, icon]) => (
+                <button
+                    key={symbol}
+                    className={`operation ${selectedOperator === symbol ? "active" : ""}`}
+                    aria-label={symbol}
+                    onClick={() => handleOperatorClick((a, b) => performOperation(a, b, symbol), symbol)}
+                >
+                    <span className={`fa-solid ${icon}`}></span>
+                </button>
+            ))}
         </div>
     );
 }
-  
-function Undo() {
-    return <span className="material-symbols-outlined">replay</span>;
-}
 
-function Operation({ value }) {
-    // <span class="icon-add">+</span>
-    return <span>{value}</span>;
+function performOperation(a, b, operator) {
+    switch (operator) {
+        case '+': return a + b;
+        case '-': return a - b;
+        case '×': return a * b;
+        case '÷': return a / b;
+        default: throw new Error('Unknown operator');
+    }
 }
 
 export default Operations;
