@@ -24,7 +24,7 @@
 .menu {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.5s ease-out;
+  /* transition: max-height 0.5s ease-out; */
 }
 
 .menu.show {
@@ -242,7 +242,7 @@
   align-items: center;
   width: var(--number-size);
   height: var(--number-size);
-  position: absolute;
+
   -webkit-touch-callout: none;
   /* iOS Safari */
   -webkit-user-select: none;
@@ -253,6 +253,53 @@
   /* Internet Explorer/Edge */
   user-select: none;
   /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
+
+.number a {
+  color: black;
+  text-decoration: none;
+}
+
+.number.active a {
+  color: black;
+}
+
+#numbers a {
+  text-decoration: none;
+}
+
+:root {
+  --number-size: 64px; /* Example size, adjust as needed */
+  --number-radius: 32px; /* Half the size of --number-size */
+}
+
+#numbers {
+  width: 320px;
+  height: 200px;
+  position: relative;
+  font: 20px nytFranklinBold;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around; /* Distributes space evenly between items */
+  align-items: center; /* Centers items vertically */
+}
+
+.number {
+  text-align: center;
+  font-size: 32px;
+  border: 3px dashed black;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: var(--number-size);
+  height: var(--number-size);
+  
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .number a {
@@ -2011,7 +2058,7 @@ button {
 
   .number {
     font-size: 32px;
-    position: absolute;
+
   }
 
   #numbers {

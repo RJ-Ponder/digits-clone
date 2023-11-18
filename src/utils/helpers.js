@@ -1,7 +1,7 @@
 const NUMBER_SET_SIZE = 6;
 const NUMBER_SET_MIN = 1;
 const NUMBER_SET_MAX = 15;
-const TARGET_MIN = -50;
+const TARGET_MIN = -20;
 const TARGET_MAX = 50;
 const { v4: uuidv4 } = require('uuid');
 
@@ -118,9 +118,26 @@ export function generateGameInfo() {
 // }
 
 // unencoded version
-export function saveDataToLocalStorage(key, data) {
-    const encodedData = JSON.stringify(data);
-    localStorage.setItem(key, encodedData);
+export function saveDataToLocalStorage(key, data, append=false) {
+    if (append) {
+        // Retrieve existing data from local storage
+        const existingDataString = localStorage.getItem(key);
+
+        // If there's existing data, parse it from JSON
+        const existingData = existingDataString ? JSON.parse(existingDataString) : {};
+
+        // Merge existing data with new data
+        const updatedData = { ...existingData, ...data };
+
+        // Convert the updated data to JSON
+        const updatedDataJson = JSON.stringify(updatedData);
+
+        // Save the updated data back to local storage
+        localStorage.setItem(key, updatedDataJson);
+    } else {
+        const encodedData = JSON.stringify(data);
+        localStorage.setItem(key, encodedData);
+    }
 }
 
 // unencoded version

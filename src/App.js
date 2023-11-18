@@ -1,13 +1,68 @@
 import "./styles.css";
 import Menu from "./components/Menu";
 import Game from "./components/Game";
+import useGameLogic from "./utils/useGameLogic";
 
 export default function App() {
+    const {
+        startingNumberSet,
+        targetAndSolution,
+        gameInfo,
+        totalStars,
+        numberSetHistory,
+        currentMove,
+        setStartingNumberSet,
+        setGameInfo,
+        setTargetAndSolution,
+        setTotalStars,
+        handleNumberClick,
+        handleOperatorClick,
+        handleUndoClick,
+        handleCollectClick,
+        earnedStars,
+        selectedPosition,
+        selectedOperator,
+        moveHistory,
+        startNewGame,
+        gamesPlayed,
+        zeroStarGames,
+        oneStarGames,
+        twoStarGames,
+        threeStarGames,
+        resetStatistics
+    } = useGameLogic();
+    const { target, solution } = targetAndSolution;
     return (
         <div id="app">
             <div id="main-content">
-                <Menu />
-                <Game />
+                <Menu startNewGame={startNewGame} solution = {solution} resetStatistics={resetStatistics}/>
+                <Game 
+                    startingNumberSet={startingNumberSet}
+                    targetAndSolution={targetAndSolution}
+                    gameInfo={gameInfo}
+                    totalStars={totalStars}
+                    numberSetHistory={numberSetHistory}
+                    currentMove={currentMove}
+                    setStartingNumberSet={setStartingNumberSet}
+                    setGameInfo={setGameInfo}
+                    setTargetAndSolution={setTargetAndSolution}
+                    setTotalStars={setTotalStars}
+                    handleNumberClick={handleNumberClick}
+                    handleOperatorClick={handleOperatorClick}
+                    handleUndoClick={handleUndoClick}
+                    handleCollectClick={handleCollectClick}
+                    earnedStars={earnedStars}
+                    selectedPosition={selectedPosition}
+                    selectedOperator={selectedOperator}
+                    moveHistory={moveHistory}
+                    startNewGame={startNewGame}
+                    gamesPlayed={gamesPlayed}
+                    zeroStarGames={zeroStarGames}
+                    oneStarGames={oneStarGames}
+                    twoStarGames={twoStarGames}
+                    threeStarGames={threeStarGames}
+                    resetStatistics={resetStatistics}
+                />
             </div>
         </div>
     );
