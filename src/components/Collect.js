@@ -29,3 +29,5 @@ export default Collect;
     // or start a new game to collect more stars
     // or keep playing the same game
 // show a total star count at the very top
+
+// added a test comment
